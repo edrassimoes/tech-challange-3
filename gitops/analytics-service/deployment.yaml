@@ -4,7 +4,6 @@ metadata:
   name: analytics-service
   namespace: analytics
 spec:
-  replicas: 1
   selector:
     matchLabels:
       app: analytics-service
@@ -23,8 +22,6 @@ spec:
           envFrom:
             - configMapRef:
                 name: analytics-service-config
-            - secretRef:
-                name: analytics-service-secret
           resources:
             requests:
               cpu: 100m

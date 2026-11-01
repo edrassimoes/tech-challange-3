@@ -4,7 +4,6 @@ metadata:
   name: evaluation-service
   namespace: evaluation
 spec:
-  replicas: 1
   selector:
     matchLabels:
       app: evaluation-service

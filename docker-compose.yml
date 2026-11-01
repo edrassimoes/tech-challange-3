@@ -8,6 +8,7 @@ services:
     volumes:
       - auth-db-data:/var/lib/postgresql/data
       - ./auth-service-main/db/init.sql:/docker-entrypoint-initdb.d/01-auth.sql:ro
+      - ./auth-service-main/db/seed-local.sql:/docker-entrypoint-initdb.d/02-seed-local.sql:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U toggle -d auth"]
       interval: 5s
@@ -15,7 +16,7 @@ services:
       retries: 10
 
   app-db:
-    image: postgres:13-alpine
+    image: postgres:16-alpine
     environment:
       POSTGRES_DB: togglemaster
       POSTGRES_USER: toggle
