@@ -1,0 +1,35 @@
+name: targeting-service
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - targeting-service-main/**
+      - .github/workflows/targeting-service.yaml
+      - .github/workflows/reusable-python.yaml
+      - .github/workflows/reusable-delivery.yaml
+  pull_request:
+    paths:
+      - targeting-service-main/**
+      - .github/workflows/targeting-service.yaml
+      - .github/workflows/reusable-python.yaml
+      - .github/workflows/reusable-delivery.yaml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  ci:
+    uses: ./.github/workflows/reusable-python.yaml
+    with:
+      service: targeting-service
+
+  delivery:
+    needs: ci
+    uses: ./.github/workflows/reusable-delivery.yaml
+    permissions:
+      contents: write
+      id-token: write
+    with:
+      service: targeting-service

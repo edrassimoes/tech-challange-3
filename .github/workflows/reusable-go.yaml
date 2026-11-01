@@ -1,0 +1,62 @@
+name: Reusable Go CI
+
+on:
+  workflow_call:
+    inputs:
+      service:
+        type: string
+        required: true
+
+permissions:
+  contents: read
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ inputs.service }}-main
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e
+        with:
+          go-version-file: ${{ inputs.service }}-main/go.mod
+          cache-dependency-path: ${{ inputs.service }}-main/go.sum
+      - run: go build ./...
+      - run: go test ./...
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e
+        with:
+          go-version-file: ${{ inputs.service }}-main/go.mod
+          cache-dependency-path: ${{ inputs.service }}-main/go.sum
+      - uses: golangci/golangci-lint-action@ba0d7d2ec06a0ea1cb5fa41b2e4a3ab91d21278a
+        with:
+          version: v2.15.0
+          working-directory: ${{ inputs.service }}-main
+
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e
+        with:
+          go-version-file: ${{ inputs.service }}-main/go.mod
+          cache-dependency-path: ${{ inputs.service }}-main/go.sum
+      - name: SCA
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25
+        with:
+          scan-type: fs
+          scan-ref: ${{ inputs.service }}-main
+          scanners: vuln
+          severity: CRITICAL
+          exit-code: "1"
+          version: v0.76.1
+      - name: SAST
+        working-directory: ${{ inputs.service }}-main
+        run: |
+          go install github.com/securego/gosec/v2/cmd/gosec@v2.30.0
+          "$(go env GOPATH)/bin/gosec" -severity high -exclude=G704 ./...

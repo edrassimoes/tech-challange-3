@@ -1,0 +1,35 @@
+name: evaluation-service
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - evaluation-service-main/**
+      - .github/workflows/evaluation-service.yaml
+      - .github/workflows/reusable-go.yaml
+      - .github/workflows/reusable-delivery.yaml
+  pull_request:
+    paths:
+      - evaluation-service-main/**
+      - .github/workflows/evaluation-service.yaml
+      - .github/workflows/reusable-go.yaml
+      - .github/workflows/reusable-delivery.yaml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  ci:
+    uses: ./.github/workflows/reusable-go.yaml
+    with:
+      service: evaluation-service
+
+  delivery:
+    needs: ci
+    uses: ./.github/workflows/reusable-delivery.yaml
+    permissions:
+      contents: write
+      id-token: write
+    with:
+      service: evaluation-service

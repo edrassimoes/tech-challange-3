@@ -1,0 +1,35 @@
+name: auth-service
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - auth-service-main/**
+      - .github/workflows/auth-service.yaml
+      - .github/workflows/reusable-go.yaml
+      - .github/workflows/reusable-delivery.yaml
+  pull_request:
+    paths:
+      - auth-service-main/**
+      - .github/workflows/auth-service.yaml
+      - .github/workflows/reusable-go.yaml
+      - .github/workflows/reusable-delivery.yaml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  ci:
+    uses: ./.github/workflows/reusable-go.yaml
+    with:
+      service: auth-service
+
+  delivery:
+    needs: ci
+    uses: ./.github/workflows/reusable-delivery.yaml
+    permissions:
+      contents: write
+      id-token: write
+    with:
+      service: auth-service

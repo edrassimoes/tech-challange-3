@@ -1,0 +1,35 @@
+name: analytics-service
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - analytics-service-main/**
+      - .github/workflows/analytics-service.yaml
+      - .github/workflows/reusable-python.yaml
+      - .github/workflows/reusable-delivery.yaml
+  pull_request:
+    paths:
+      - analytics-service-main/**
+      - .github/workflows/analytics-service.yaml
+      - .github/workflows/reusable-python.yaml
+      - .github/workflows/reusable-delivery.yaml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  ci:
+    uses: ./.github/workflows/reusable-python.yaml
+    with:
+      service: analytics-service
+
+  delivery:
+    needs: ci
+    uses: ./.github/workflows/reusable-delivery.yaml
+    permissions:
+      contents: write
+      id-token: write
+    with:
+      service: analytics-service
