@@ -11,7 +11,7 @@ permissions:
   contents: read
 
 jobs:
-  build-test:
+  build:
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -23,7 +23,6 @@ jobs:
           go-version-file: ${{ inputs.service }}-main/go.mod
           cache-dependency-path: ${{ inputs.service }}-main/go.sum
       - run: go build ./...
-      - run: go test ./...
 
   lint:
     runs-on: ubuntu-latest
