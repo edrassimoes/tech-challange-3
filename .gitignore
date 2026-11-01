@@ -1,3 +1,5 @@
 .idea
 .DS_Store
-k8s/**/secret.yaml
+.terraform/
+*.tfstate*
+*.tfvars
