@@ -1,14 +1,14 @@
-FROM golang:1.21-alpine AS builder
+FROM golang:1.27-alpine AS builder
 
 WORKDIR /src
 
-COPY go.mod go.sum* ./
+COPY go.mod go.sum ./
 RUN go mod download
 
 COPY *.go ./
-RUN CGO_ENABLED=0 GOOS=linux go build -mod=mod -o /auth-service .
+RUN CGO_ENABLED=0 GOOS=linux go build -o /auth-service .
 
-FROM alpine:3.20
+FROM alpine:3.24
 
 WORKDIR /app
 
