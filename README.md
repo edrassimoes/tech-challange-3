@@ -4,9 +4,9 @@ Plataforma de feature flags com 5 microsserviços: `auth`, `flag`, `targeting`, 
 
 ## Estrutura
 
-- `terraform/`: infraestrutura na AWS
+- `terraform/`: infraestrutura na AWS e componentes do cluster (ArgoCD, KEDA, Ingress NGINX e metrics-server)
 - `gitops/`: manifestos Kubernetes monitorados pelo ArgoCD
-- `scripts/bootstrap.sh`: instala os componentes do cluster, cria os Secrets e inicializa os bancos
+- `scripts/bootstrap.sh`: cria os Secrets, inicializa os bancos e aplica os Applications
 - `docker-compose.yml`: ambiente local
 
 ## Subir o ambiente
@@ -46,14 +46,10 @@ A interface fica em `https://localhost:8080`.
 
 ## Destruir o ambiente
 
-Remova o Load Balancer antes do `destroy`, pois ele não é gerenciado pelo Terraform:
+Remova os serviços antes do `destroy`, para que o Terraform consiga desinstalar o KEDA e o ArgoCD:
 
 ```bash
 kubectl delete -f gitops/argocd/applications.yaml
-```
-
-```bash
-helm uninstall ingress-nginx --namespace ingress-nginx --wait
 ```
 
 ```bash

@@ -22,20 +22,8 @@ auth_db=$(tf_output -json database_urls | jq -r .auth)
 flags_db=$(tf_output -json database_urls | jq -r .flags)
 targeting_db=$(tf_output -json database_urls | jq -r .targeting)
 redis_url=$(tf_output -raw redis_url)
-keda_role=$(tf_output -json service_role_arns | jq -r .ToggleMasterKedaRole)
 master_key=$(openssl rand -hex 32)
 service_key="tm_key_$(openssl rand -hex 32)"
-
-helm repo add argo https://argoproj.github.io/argo-helm
-helm repo add kedacore https://kedacore.github.io/charts
-helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
-helm repo update
-
-kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
-helm upgrade --install ingress-nginx ingress-nginx/ingress-nginx --namespace ingress-nginx --create-namespace --wait
-helm upgrade --install keda kedacore/keda --namespace keda --create-namespace --wait \
-  --set "serviceAccount.operator.annotations.eks\.amazonaws\.com/role-arn=$keda_role"
-helm upgrade --install argocd argo/argo-cd --namespace argocd --create-namespace --wait
 
 for service in auth flag targeting evaluation analytics; do
   kubectl apply -f "gitops/$service-service/namespace.yaml"

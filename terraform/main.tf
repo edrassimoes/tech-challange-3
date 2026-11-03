@@ -38,3 +38,11 @@ module "iam" {
   table_arn         = module.databases.dynamodb_table_arn
   github_repository = var.github_repository
 }
+
+module "addons" {
+  source = "./modules/addons"
+
+  keda_role_arn = module.iam.service_role_arns["ToggleMasterKedaRole"]
+
+  depends_on = [module.eks]
+}
