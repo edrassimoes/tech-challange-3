@@ -10,5 +10,5 @@ variable "project_name" {
 
 variable "github_repository" {
   type    = string
-  default = "edrassimoes/tech-challange-3"
+  default = "edrassimoes@88869141/tech-challange-3@1350864741"
 }
