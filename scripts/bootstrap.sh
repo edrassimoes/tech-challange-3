@@ -13,7 +13,7 @@ create_secret() {
 
 init_db() {
   kubectl run "db-init-$1" --rm -i --restart=Never --pod-running-timeout=5m --image=postgres:16-alpine \
-    -- psql "$2" -v ON_ERROR_STOP=1 -c "$3"
+    -- psql "$2" -v ON_ERROR_STOP=1 -c "${3//\$\$/\$\$\$\$}"
 }
 
 aws eks update-kubeconfig --name "$(tf_output -raw cluster_name)" --region us-east-1
